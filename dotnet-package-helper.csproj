@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Start of target framework(s) -->
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <!-- End of target framework(s) -->
+    <!-- Start of metadata for 'dotnet pack' -->
+    <PackageId>dotnet-package-helper</PackageId>
+    <VersionPrefix>0.0.1</VersionPrefix>
+    <Description>.NET (dotnet) CLI global tool to help handling package reference recursively</Description>
+    <PackageTags>tools</PackageTags>
+    <IsPackable>true</IsPackable>
+    <Authors>solacens</Authors>
+    <PackageProjectUrl>https://github.com/solacens/dotnet-package-helper</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>Copyright 2019 (c) solacens. All rights reserved.</Copyright>
+    <!-- End of metadata for 'dotnet pack' -->
+    <!-- Start of other attributes -->
+    <OutputType>Exe</OutputType>
+    <PackAsTool>true</PackAsTool>
+    <ToolCommandName>dotnet-package-helper</ToolCommandName>
+    <RootNamespace>Package.Helper</RootNamespace>
+    <!-- End of other attributes -->
+  </PropertyGroup>
+  
+  <ItemGroup>
+    <PackageReference Include="CommandLineParser" Version="2.5.0" />
+    <PackageReference Include="McMaster.Extensions.CommandLineUtils" Version="2.3.4" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
+    <PackageReference Include="NuGet.ProjectModel" Version="5.2.0" />
+    <PackageReference Include="Unity" Version="5.11.1" />
+  </ItemGroup>
+
+</Project>

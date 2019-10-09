@@ -1,0 +1,9 @@
+# dotnet
+obj/
+bin/
+
+# output folder
+output/
+
+# Intellij
+.idea/
