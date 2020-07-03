@@ -8,18 +8,18 @@ namespace Package.Helper
 {
   public static class Helpers
   {
-    public static IEnumerable<string> ResolveCsproj(string path)
+    public static IEnumerable<string> ResolveProj(string path)
     {
       // Constructor handling string
       if (string.IsNullOrEmpty(path))
       {
-        // Go find the first csproj in the current working directory
+        // Go find the first .csproj/.sln in the current working directory
         var files = Directory.GetFiles(Directory.GetCurrentDirectory());
-        path = files.FirstOrDefault(file => Path.GetExtension(file) == ".csproj");
+        path = files.FirstOrDefault(file => Path.GetExtension(file) == ".csproj" || Path.GetExtension(file) == ".sln");
         if (string.IsNullOrEmpty(path))
         {
           throw new Exception(
-            "Unable to find any .csproj file in your current directory. You may specific path(s) as arguments.");
+            "Unable to find any .csproj/.sln file in your current directory. You may specific path(s) as arguments.");
         }
 
         return new List<string> {path};
@@ -29,7 +29,7 @@ namespace Package.Helper
       return paths.ResolvePaths();
     }
 
-    public static IEnumerable<string> ResolveCsproj(IEnumerable<string> paths)
+    public static IEnumerable<string> ResolveProj(IEnumerable<string> paths)
     {
       // Constructor handling list of strings
       return paths.ResolvePaths();
@@ -40,13 +40,6 @@ namespace Package.Helper
       var filename = Path.GetFileName(path);
 
       return Regex.Replace(filename, "\\.[Cc][Ss][Pp][Rr][Oo][Jj]$", "");
-    }
-
-    public static string GetAbsolutePathFromCsprojPathAndRelativeCsprojPath(string path, string relativePath)
-    {
-      relativePath = relativePath.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
-      var combinedPath = Path.Combine(Path.GetDirectoryName(path), relativePath);
-      return Path.GetFullPath(combinedPath);
     }
 
     private static string ResolvePath(this string path)

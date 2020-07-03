@@ -67,22 +67,22 @@ namespace Package.Helper
 
     private static string RetrieveVersionFromProjectFile(string path)
     {
-      var csprojContent = File.ReadAllText(path);
+      var projContent = File.ReadAllText(path);
       var regex = new Regex("<VersionPrefix>(?<version>[0-9\\.]+)</VersionPrefix>");
 
-      var match = regex.Match(csprojContent);
+      var match = regex.Match(projContent);
 
       return match.Success ? match.Groups["version"].Value : "";
     }
 
     public static bool BumpVersionForCsproj(string path, string currentSemver, Bumping which = Bumping.Patch)
     {
-      var csprojContent = File.ReadAllText(path);
+      var projContent = File.ReadAllText(path);
       var nextSemver = BumpVersion(currentSemver, which);
 
-      var newCsprojContent = Regex.Replace(csprojContent, "<VersionPrefix>[0-9\\.]+</VersionPrefix>", $"<VersionPrefix>{nextSemver}</VersionPrefix>");
+      var newCsprojContent = Regex.Replace(projContent, "<VersionPrefix>[0-9\\.]+</VersionPrefix>", $"<VersionPrefix>{nextSemver}</VersionPrefix>");
 
-      if (csprojContent == newCsprojContent)
+      if (projContent == newCsprojContent)
       {
         return false;
       }

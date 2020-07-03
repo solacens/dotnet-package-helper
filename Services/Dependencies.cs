@@ -35,7 +35,7 @@ namespace Package.Helper.Services
       if (!runStatus.IsSuccess)
       {
         throw new Exception(
-          $"Unable to process the project `{projectPath}. Are you sure this is a valid .csproj?" +
+          $"Unable to process the project `{projectPath}. Are you sure this is a valid .csproj/.sln?" +
           "\r\n\r\nHere is the full error message returned from the Microsoft Build Engine:\r\n\r\n" +
           runStatus.Output);
       }
@@ -45,12 +45,12 @@ namespace Package.Helper.Services
       return new DependencyGraphSpec(JsonConvert.DeserializeObject<JObject>(dependencyGraphText));
     }
 
-    public IEnumerable<DependencyGraphSpec> GetAllDependencies(IEnumerable<string> csprojPaths)
+    public IEnumerable<DependencyGraphSpec> GetAllDependencies(IEnumerable<string> projPaths)
     {
-      var depTasks = csprojPaths
-        .Aggregate(new List<Task<DependencyGraphSpec>>(), (list, csprojPath) =>
+      var depTasks = projPaths
+        .Aggregate(new List<Task<DependencyGraphSpec>>(), (list, projPath) =>
         {
-          list.Add(Task<DependencyGraphSpec>.Factory.StartNew(() => GetDependencies(csprojPath)));
+          list.Add(Task<DependencyGraphSpec>.Factory.StartNew(() => GetDependencies(projPath)));
 
           return list;
         })
@@ -63,9 +63,9 @@ namespace Package.Helper.Services
         .ToList();
     }
 
-    public void PrintDependencies(IEnumerable<string> csprojPaths)
+    public void PrintDependencies(IEnumerable<string> projPaths)
     {
-      foreach (var projectPath in csprojPaths)
+      foreach (var projectPath in projPaths)
       {
         var dependencyDict = new Dictionary<string, PackageSpec>();
 
@@ -85,9 +85,50 @@ namespace Package.Helper.Services
       }
     }
 
-    public void PrintFlattenedPublicPackages(IEnumerable<string> csprojPaths)
+    public void PrintFlattenDependencies(IEnumerable<string> projPaths, bool printName, bool getDirectory, string basePath)
     {
-      foreach (var projectPath in csprojPaths)
+      foreach (var projectPath in projPaths)
+      {
+        var list = new List<string>();
+
+        var dependencyGraph = GetDependencies(projectPath);
+
+        foreach (var project in dependencyGraph.Projects)
+        {
+          if (printName)
+          {
+            list.Add(project.Name);
+          }
+          else
+          {
+            var path = project.FilePath;
+            if (getDirectory)
+            {
+              DirectoryInfo di = new DirectoryInfo(path);
+              path = di.Parent.FullName;
+            }
+            if (basePath != "")
+            {
+              path = Path.GetRelativePath(basePath, path);
+            }
+            path = path.Replace(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+
+            list.Add(path);
+          }
+        }
+
+        list.Sort();
+
+        foreach (var value in list)
+        {
+          Console.WriteLine(value);
+        }
+      }
+    }
+
+    public void PrintFlattenedPublicPackages(IEnumerable<string> projPaths)
+    {
+      foreach (var projectPath in projPaths)
       {
         var packageDict = new Dictionary<string, List<string>>();
 
@@ -128,11 +169,16 @@ namespace Package.Helper.Services
     private static void LevelPrinter(IReadOnlyDictionary<string, PackageSpec> data, string elementName,
       int indentLevel = 0)
     {
-      var name = data[elementName].Name;
-      if (elementName == null || !data.ContainsKey(elementName))
+      if (elementName.EndsWith(".sln"))
+      {
+        Logger.Error("Unable to retrive root of hierarchy from .sln file");
+        return;
+      }
+      else if (elementName == null || !data.ContainsKey(elementName))
       {
         throw new Exception("Unable to locate the root project.");
       }
+      var name = data[elementName].Name;
 
       var projectPathList = data[elementName]
         .RestoreMetadata

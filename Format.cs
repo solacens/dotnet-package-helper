@@ -17,9 +17,9 @@ namespace Package.Helper
 
     private static void FormatByPath(string path)
     {
-      var csprojContent = File.ReadAllText(path);
+      var projContent = File.ReadAllText(path);
 
-      var doc = XDocument.Parse(csprojContent);
+      var doc = XDocument.Parse(projContent);
 
       if (doc.Root == null)
       {
