@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <!-- Start of target framework(s) -->
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <!-- End of target framework(s) -->
     <!-- Start of metadata for 'dotnet pack' -->
     <PackageId>dotnet-package-helper</PackageId>
-    <VersionPrefix>0.0.1</VersionPrefix>
+    <VersionPrefix>0.0.2</VersionPrefix>
     <Description>.NET (dotnet) CLI global tool to help handling package reference recursively</Description>
     <PackageTags>tools</PackageTags>
     <IsPackable>true</IsPackable>
